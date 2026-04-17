@@ -1,10 +1,12 @@
 package com.loja_de_jogos.vapor.services;
 
+import com.loja_de_jogos.vapor.enums.AgeRating;
 import com.loja_de_jogos.vapor.enums.Genre;
 import com.loja_de_jogos.vapor.models.Game;
 import com.loja_de_jogos.vapor.repositories.GameRepository;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +38,12 @@ public class GameService {
                 game.setDescription(updatedGame.getDescription());
                 game.setPrice(updatedGame.getPrice());
                 game.setGenre(updatedGame.getGenre());
+                game.setReleaseDate(updatedGame.getReleaseDate());
+                game.setUserRating(updatedGame.getUserRating());
+                game.setDeveloper(updatedGame.getDeveloper());
+                game.setPublisher(updatedGame.getPublisher());
+                game.setHasDiscount(updatedGame.getHasDiscount());
+                game.setAgeRating(updatedGame.getAgeRating());
 
                 return repository.save(game);
             })
