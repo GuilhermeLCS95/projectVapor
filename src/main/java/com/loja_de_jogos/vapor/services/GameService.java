@@ -1,9 +1,13 @@
 package com.loja_de_jogos.vapor.services;
 
+import com.loja_de_jogos.vapor.dtos.GameRequestDTO;
+import com.loja_de_jogos.vapor.dtos.GameResponseDTO;
 import com.loja_de_jogos.vapor.enums.AgeRating;
 import com.loja_de_jogos.vapor.enums.Genre;
+import com.loja_de_jogos.vapor.mappers.GameMapper;
 import com.loja_de_jogos.vapor.models.Game;
 import com.loja_de_jogos.vapor.repositories.GameRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -12,38 +16,30 @@ import java.util.Optional;
 
 @Service
 public class GameService {
+    @Autowired
     private final GameRepository repository;
 
     public GameService(GameRepository repository) {
         this.repository = repository;
     }
 
-    public Game addGame(Game game){
+    public Game addGame(GameRequestDTO dto){
+        Game game = GameMapper.toEntity(dto);
         return repository.save(game);
     }
 
-    public Optional<Game> getGameById(Long id){
-        return repository.findById(id);
+    public Optional<GameResponseDTO> getGameById(Long id){
+        return repository.findById(id).map(GameMapper::toDTO);
     }
 
-    public List<Game> getAllGames(){
-        return repository.findAll();
+    public List<GameResponseDTO> getAllGames(){
+        return repository.findAll().stream().map(GameMapper::toDTO).toList();
     }
 
-    public Game updateGame(Long id, Game updatedGame){
+    public Game updateGame(Long id, GameRequestDTO dto){
         return repository.findById(id)
             .map(game ->{
-                game.setName(updatedGame.getName());
-                game.setImage(updatedGame.getImage());
-                game.setDescription(updatedGame.getDescription());
-                game.setPrice(updatedGame.getPrice());
-                game.setGenre(updatedGame.getGenre());
-                game.setReleaseDate(updatedGame.getReleaseDate());
-                game.setUserRating(updatedGame.getUserRating());
-                game.setDeveloper(updatedGame.getDeveloper());
-                game.setPublisher(updatedGame.getPublisher());
-                game.setHasDiscount(updatedGame.getHasDiscount());
-                game.setAgeRating(updatedGame.getAgeRating());
+                GameMapper.updateEntity(game,dto);
 
                 return repository.save(game);
             })
@@ -51,6 +47,10 @@ public class GameService {
     }
 
     public void deleteGame(Long id){
+        if(!repository.existsById(id)){
+            throw new RuntimeException("Game not found.");
+        }
+        
         repository.deleteById(id);
     }
 

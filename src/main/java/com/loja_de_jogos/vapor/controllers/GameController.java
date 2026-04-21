@@ -1,7 +1,10 @@
 package com.loja_de_jogos.vapor.controllers;
 
+import com.loja_de_jogos.vapor.dtos.GameRequestDTO;
+import com.loja_de_jogos.vapor.dtos.GameResponseDTO;
 import com.loja_de_jogos.vapor.models.Game;
 import com.loja_de_jogos.vapor.services.GameService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,23 +21,23 @@ public class GameController {
     }
 
     @PostMapping("/create")
-    public Game create(@RequestBody Game game){
-       return service.addGame(game);
+    public Game create(@Valid @RequestBody GameRequestDTO dto){
+       return service.addGame(dto);
     }
 
     @GetMapping("/get/{id}")
-    public Optional<Game> getById(@PathVariable Long id){
+    public Optional<GameResponseDTO> getById(@PathVariable Long id){
         return service.getGameById(id);
     }
 
     @GetMapping("/get")
-    public List<Game> getAll(){
+    public List<GameResponseDTO> getAll(){
         return service.getAllGames();
     }
 
     @PutMapping("/update/{id}")
-    public Game update(@PathVariable Long id, @RequestBody Game game){
-        return service.updateGame(id,game);
+    public Game update(@Valid @PathVariable Long id, @RequestBody GameRequestDTO dto){
+        return service.updateGame(id,dto);
     }
 
     @DeleteMapping("/delete/{id}")
