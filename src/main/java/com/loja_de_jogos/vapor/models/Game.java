@@ -6,12 +6,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -34,11 +35,9 @@ public class Game {
     private Boolean hasDiscount;
     private AgeRating ageRating;
 
-
-    public Game(Long id, String name, String image, String description, Double price, List<Genre> genre,
+    public Game(String name, String image, String description, Double price, List<Genre> genre,
                 Timestamp releaseDate, Double userRating, String developer, String publisher, Boolean hasDiscount,
                 AgeRating ageRating) {
-        this.id = id;
         this.name = name;
         this.image = image;
         this.description = description;
@@ -51,5 +50,6 @@ public class Game {
         this.hasDiscount = hasDiscount;
         this.ageRating = ageRating;
     }
-
 }
+
+

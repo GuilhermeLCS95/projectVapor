@@ -1,13 +1,13 @@
 package com.loja_de_jogos.vapor.mappers;
 
-import com.loja_de_jogos.vapor.dtos.GameRequestDTO;
-import com.loja_de_jogos.vapor.dtos.GameResponseDTO;
+import com.loja_de_jogos.vapor.dtos.gameDTO.GameCreationRequestDTO;
+import com.loja_de_jogos.vapor.dtos.gameDTO.GameResponseDTO;
+import com.loja_de_jogos.vapor.dtos.gameDTO.GameUpdateRequestDTO;
 import com.loja_de_jogos.vapor.models.Game;
 
 public class GameMapper {
-    public static Game toEntity(GameRequestDTO dto){
+    public static Game gameDtoToEntity(GameCreationRequestDTO dto){
         return new Game(
-                dto.id(),
                 dto.name(),
                 dto.image(),
                 dto.description(),
@@ -23,7 +23,7 @@ public class GameMapper {
 
     }
 
-    public static void updateEntity(Game game, GameRequestDTO dto){
+    public static void gameUpdateDtoToEntity(Game game, GameUpdateRequestDTO dto){
         game.setName(dto.name());
         game.setImage(dto.image());
         game.setDescription(dto.description());
@@ -37,7 +37,7 @@ public class GameMapper {
         game.setAgeRating(dto.ageRating());
     }
 
-    public static GameResponseDTO toDTO(Game game){
+    public static GameResponseDTO gameEntityToDTO(Game game){
         return new GameResponseDTO(
                 game.getName(),
                 game.getImage(),

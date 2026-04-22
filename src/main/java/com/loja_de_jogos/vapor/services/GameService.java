@@ -1,57 +1,54 @@
 package com.loja_de_jogos.vapor.services;
 
-import com.loja_de_jogos.vapor.dtos.GameRequestDTO;
-import com.loja_de_jogos.vapor.dtos.GameResponseDTO;
-import com.loja_de_jogos.vapor.enums.AgeRating;
-import com.loja_de_jogos.vapor.enums.Genre;
+import com.loja_de_jogos.vapor.dtos.gameDTO.GameCreationRequestDTO;
+import com.loja_de_jogos.vapor.dtos.gameDTO.GameResponseDTO;
+import com.loja_de_jogos.vapor.dtos.gameDTO.GameUpdateRequestDTO;
 import com.loja_de_jogos.vapor.mappers.GameMapper;
 import com.loja_de_jogos.vapor.models.Game;
 import com.loja_de_jogos.vapor.repositories.GameRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class GameService {
-    @Autowired
-    private final GameRepository repository;
+    private final GameRepository gameRepository;
 
     public GameService(GameRepository repository) {
-        this.repository = repository;
+        this.gameRepository = repository;
     }
 
-    public Game addGame(GameRequestDTO dto){
-        Game game = GameMapper.toEntity(dto);
-        return repository.save(game);
+    public GameResponseDTO addGame(GameCreationRequestDTO gameCreationRequest){
+        Game game = GameMapper.gameDtoToEntity(gameCreationRequest);
+        Game savedGame = gameRepository.save(game);
+        return GameMapper.gameEntityToDTO(savedGame);
     }
 
     public Optional<GameResponseDTO> getGameById(Long id){
-        return repository.findById(id).map(GameMapper::toDTO);
+        return gameRepository.findById(id).map(GameMapper::gameEntityToDTO);
     }
 
     public List<GameResponseDTO> getAllGames(){
-        return repository.findAll().stream().map(GameMapper::toDTO).toList();
+        return gameRepository.findAll().stream().map(GameMapper::gameEntityToDTO).toList();
     }
 
-    public Game updateGame(Long id, GameRequestDTO dto){
-        return repository.findById(id)
+    public GameResponseDTO updateGame(Long id, GameUpdateRequestDTO gameUpdateRequest){
+        return gameRepository.findById(id)
             .map(game ->{
-                GameMapper.updateEntity(game,dto);
-
-                return repository.save(game);
+                GameMapper.gameUpdateDtoToEntity(game,gameUpdateRequest);
+                Game updatedGame = gameRepository.save(game);
+                return GameMapper.gameEntityToDTO(updatedGame);
             })
             .orElseThrow(() -> new RuntimeException("Game not found."));
     }
 
     public void deleteGame(Long id){
-        if(!repository.existsById(id)){
+        if(!gameRepository.existsById(id)){
             throw new RuntimeException("Game not found.");
         }
         
-        repository.deleteById(id);
+        gameRepository.deleteById(id);
     }
 
 }

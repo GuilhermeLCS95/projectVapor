@@ -1,7 +1,8 @@
 package com.loja_de_jogos.vapor.controllers;
 
-import com.loja_de_jogos.vapor.dtos.GameRequestDTO;
-import com.loja_de_jogos.vapor.dtos.GameResponseDTO;
+import com.loja_de_jogos.vapor.dtos.gameDTO.GameCreationRequestDTO;
+import com.loja_de_jogos.vapor.dtos.gameDTO.GameResponseDTO;
+import com.loja_de_jogos.vapor.dtos.gameDTO.GameUpdateRequestDTO;
 import com.loja_de_jogos.vapor.models.Game;
 import com.loja_de_jogos.vapor.services.GameService;
 import jakarta.validation.Valid;
@@ -14,34 +15,34 @@ import java.util.Optional;
 @RequestMapping("/games")
 @CrossOrigin(origins = "*")
 public class GameController {
-    private final GameService service;
+    private final GameService gameService;
 
     public GameController(GameService service) {
-        this.service = service;
+        this.gameService = service;
     }
 
     @PostMapping("/create")
-    public Game create(@Valid @RequestBody GameRequestDTO dto){
-       return service.addGame(dto);
+    public GameResponseDTO create(@Valid @RequestBody GameCreationRequestDTO gameCreationRequest){
+       return gameService.addGame(gameCreationRequest);
     }
 
     @GetMapping("/get/{id}")
     public Optional<GameResponseDTO> getById(@PathVariable Long id){
-        return service.getGameById(id);
+        return gameService.getGameById(id);
     }
 
     @GetMapping("/get")
     public List<GameResponseDTO> getAll(){
-        return service.getAllGames();
+        return gameService.getAllGames();
     }
 
     @PutMapping("/update/{id}")
-    public Game update(@Valid @PathVariable Long id, @RequestBody GameRequestDTO dto){
-        return service.updateGame(id,dto);
+    public GameResponseDTO update(@Valid @PathVariable Long id, @RequestBody GameUpdateRequestDTO gameUpdateRequest){
+        return gameService.updateGame(id,gameUpdateRequest);
     }
 
     @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable Long id){
-        service.deleteGame(id);
+        gameService.deleteGame(id);
     }
 }

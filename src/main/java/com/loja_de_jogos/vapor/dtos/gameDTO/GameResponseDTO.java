@@ -1,4 +1,4 @@
-package com.loja_de_jogos.vapor.dtos;
+package com.loja_de_jogos.vapor.dtos.gameDTO;
 
 import com.loja_de_jogos.vapor.enums.AgeRating;
 import com.loja_de_jogos.vapor.enums.Genre;
