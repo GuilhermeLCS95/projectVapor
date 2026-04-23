@@ -2,6 +2,9 @@ package com.loja_de_jogos.vapor.dtos.gameDTO;
 
 import com.loja_de_jogos.vapor.enums.AgeRating;
 import com.loja_de_jogos.vapor.enums.Genre;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
 
 import java.sql.Timestamp;
@@ -22,6 +25,8 @@ public record GameCreationRequestDTO(
         @PositiveOrZero(message = "Price cannot be negative.")
         Double price,
 
+        @ElementCollection
+        @Enumerated(EnumType.STRING)
         @NotEmpty(message = "Genre cannot be empty.")
         List<Genre> genre,
 
@@ -39,6 +44,8 @@ public record GameCreationRequestDTO(
 
         Boolean hasDiscount,
 
+        @ElementCollection
+        @Enumerated(EnumType.STRING)
         @NotNull(message = "Age rating cannot be null.")
         AgeRating ageRating) {
 }

@@ -6,35 +6,35 @@ import com.loja_de_jogos.vapor.dtos.gameDTO.GameUpdateRequestDTO;
 import com.loja_de_jogos.vapor.models.Game;
 
 public class GameMapper {
-    public static Game gameDtoToEntity(GameCreationRequestDTO dto){
+    public static Game gameDtoToEntity(GameCreationRequestDTO gameCreationRequest){
         return new Game(
-                dto.name(),
-                dto.image(),
-                dto.description(),
-                dto.price(),
-                dto.genre(),
-                dto.releaseDate(),
-                dto.userRating(),
-                dto.developer(),
-                dto.publisher(),
-                dto.hasDiscount(),
-                dto.ageRating()
+                gameCreationRequest.name(),
+                gameCreationRequest.image(),
+                gameCreationRequest.description(),
+                gameCreationRequest.price(),
+                gameCreationRequest.genre(),
+                gameCreationRequest.releaseDate(),
+                gameCreationRequest.userRating(),
+                gameCreationRequest.developer(),
+                gameCreationRequest.publisher(),
+                gameCreationRequest.hasDiscount(),
+                gameCreationRequest.ageRating()
         );
 
     }
 
-    public static void gameUpdateDtoToEntity(Game game, GameUpdateRequestDTO dto){
-        game.setName(dto.name());
-        game.setImage(dto.image());
-        game.setDescription(dto.description());
-        game.setPrice(dto.price());
-        game.setGenre(dto.genre());
-        game.setReleaseDate(dto.releaseDate());
-        game.setUserRating(dto.userRating());
-        game.setDeveloper(dto.developer());
-        game.setPublisher(dto.publisher());
-        game.setHasDiscount(dto.hasDiscount());
-        game.setAgeRating(dto.ageRating());
+    public static void gameUpdateDtoToEntity(Game game, GameUpdateRequestDTO gameUpdateRequest){
+        game.setName(gameUpdateRequest.name());
+        game.setImage(gameUpdateRequest.image());
+        game.setDescription(gameUpdateRequest.description());
+        game.setPrice(gameUpdateRequest.price());
+        game.setGenre(gameUpdateRequest.genre());
+        game.setReleaseDate(gameUpdateRequest.releaseDate());
+        game.setUserRating(gameUpdateRequest.userRating());
+        game.setDeveloper(gameUpdateRequest.developer());
+        game.setPublisher(gameUpdateRequest.publisher());
+        game.setHasDiscount(gameUpdateRequest.hasDiscount());
+        game.setAgeRating(gameUpdateRequest.ageRating());
     }
 
     public static GameResponseDTO gameEntityToDTO(Game game){
