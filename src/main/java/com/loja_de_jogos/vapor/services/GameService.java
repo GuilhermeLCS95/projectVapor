@@ -14,31 +14,33 @@ import java.util.Optional;
 @Service
 public class GameService {
     private final GameRepository gameRepository;
+    private final GameMapper gameMapper;
 
-    public GameService(GameRepository repository) {
-        this.gameRepository = repository;
+    public GameService(GameRepository gameRepository, GameMapper gameMapper) {
+        this.gameRepository = gameRepository;
+        this.gameMapper = gameMapper;
     }
 
     public GameResponseDTO addGame(GameCreationRequestDTO gameCreationRequest){
-        Game game = GameMapper.gameDtoToEntity(gameCreationRequest);
+        Game game = gameMapper.gameDtoToEntity(gameCreationRequest);
         Game savedGame = gameRepository.save(game);
-        return GameMapper.gameEntityToDTO(savedGame);
+        return gameMapper.gameEntityToDTO(savedGame);
     }
 
     public Optional<GameResponseDTO> getGameById(Long id){
-        return gameRepository.findById(id).map(GameMapper::gameEntityToDTO);
+        return gameRepository.findById(id).map(gameMapper::gameEntityToDTO);
     }
 
     public List<GameResponseDTO> getAllGames(){
-        return gameRepository.findAll().stream().map(GameMapper::gameEntityToDTO).toList();
+        return gameRepository.findAll().stream().map(gameMapper::gameEntityToDTO).toList();
     }
 
     public GameResponseDTO updateGame(Long id, GameUpdateRequestDTO gameUpdateRequest){
         return gameRepository.findById(id)
             .map(game ->{
-                GameMapper.gameUpdateDtoToEntity(game,gameUpdateRequest);
+                gameMapper.gameUpdateDtoToEntity(gameUpdateRequest, game);
                 Game updatedGame = gameRepository.save(game);
-                return GameMapper.gameEntityToDTO(updatedGame);
+                return gameMapper.gameEntityToDTO(updatedGame);
             })
             .orElseThrow(() -> new RuntimeException("Game not found."));
     }
