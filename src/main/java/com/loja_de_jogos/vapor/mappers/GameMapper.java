@@ -10,6 +10,6 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface GameMapper {
     Game gameCreationDtoToEntity(GameCreationRequestDTO dto);
-    GameResponseDTO gameResponseEntityToDTO(Game game);
+    GameResponseDTO gameEntityToResponseDTO(Game game);
     void gameUpdateDtoToEntity(GameUpdateRequestDTO dto, @MappingTarget Game game);
 }
