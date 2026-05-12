@@ -22,17 +22,17 @@ public class GameService {
     }
 
     public GameResponseDTO addGame(GameCreationRequestDTO gameCreationRequest){
-        Game game = gameMapper.gameDtoToEntity(gameCreationRequest);
+        Game game = gameMapper.gameCreationDtoToEntity(gameCreationRequest);
         Game savedGame = gameRepository.save(game);
-        return gameMapper.gameEntityToDTO(savedGame);
+        return gameMapper.gameResponseEntityToDTO(savedGame);
     }
 
     public Optional<GameResponseDTO> getGameById(Long id){
-        return gameRepository.findById(id).map(gameMapper::gameEntityToDTO);
+        return gameRepository.findById(id).map(gameMapper::gameResponseEntityToDTO);
     }
 
     public List<GameResponseDTO> getAllGames(){
-        return gameRepository.findAll().stream().map(gameMapper::gameEntityToDTO).toList();
+        return gameRepository.findAll().stream().map(gameMapper::gameResponseEntityToDTO).toList();
     }
 
     public GameResponseDTO updateGame(Long id, GameUpdateRequestDTO gameUpdateRequest){
@@ -40,7 +40,7 @@ public class GameService {
             .map(game ->{
                 gameMapper.gameUpdateDtoToEntity(gameUpdateRequest, game);
                 Game updatedGame = gameRepository.save(game);
-                return gameMapper.gameEntityToDTO(updatedGame);
+                return gameMapper.gameResponseEntityToDTO(updatedGame);
             })
             .orElseThrow(() -> new RuntimeException("Game not found."));
     }
