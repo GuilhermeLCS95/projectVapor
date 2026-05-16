@@ -21,27 +21,27 @@ public class GameController {
         this.gameService = service;
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public GameResponseDTO create(@Valid @RequestBody GameCreationRequestDTO gameCreationRequest){
        return gameService.addGame(gameCreationRequest);
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     public Optional<GameResponseDTO> getById(@PathVariable Long id){
         return gameService.getGameById(id);
     }
 
-    @GetMapping("/get")
+    @GetMapping
     public List<GameResponseDTO> getAll(){
         return gameService.getAllGames();
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public GameResponseDTO update(@Valid @PathVariable Long id, @RequestBody GameUpdateRequestDTO gameUpdateRequest){
         return gameService.updateGame(id,gameUpdateRequest);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id){
         gameService.deleteGame(id);
     }
