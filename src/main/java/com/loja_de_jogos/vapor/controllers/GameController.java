@@ -3,13 +3,12 @@ package com.loja_de_jogos.vapor.controllers;
 import com.loja_de_jogos.vapor.dtos.gameDTO.GameCreationRequestDTO;
 import com.loja_de_jogos.vapor.dtos.gameDTO.GameResponseDTO;
 import com.loja_de_jogos.vapor.dtos.gameDTO.GameUpdateRequestDTO;
-import com.loja_de_jogos.vapor.models.Game;
 import com.loja_de_jogos.vapor.services.GameService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/games")
@@ -27,8 +26,10 @@ public class GameController {
     }
 
     @GetMapping("/{id}")
-    public Optional<GameResponseDTO> getById(@PathVariable Long id){
-        return gameService.getGameById(id);
+    public ResponseEntity<GameResponseDTO> getById(@PathVariable Long id){
+        return gameService.getGameById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping
@@ -37,7 +38,7 @@ public class GameController {
     }
 
     @PutMapping("/{id}")
-    public GameResponseDTO update(@Valid @PathVariable Long id, @RequestBody GameUpdateRequestDTO gameUpdateRequest){
+    public GameResponseDTO update(@PathVariable Long id, @Valid @RequestBody GameUpdateRequestDTO gameUpdateRequest){
         return gameService.updateGame(id,gameUpdateRequest);
     }
 
