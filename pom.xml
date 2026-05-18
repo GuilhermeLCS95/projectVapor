@@ -29,6 +29,7 @@
 	<properties>
 		<java.version>21</java.version>
 		<jacoco.version>0.8.13</jacoco.version>
+		<jacoco.minimum.coverage>0.80</jacoco.minimum.coverage>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -176,6 +177,7 @@
 					</execution>
 					<execution>
 						<id>check</id>
+						<phase>verify</phase>
 						<goals>
 							<goal>check</goal>
 						</goals>
@@ -187,7 +189,7 @@
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.80</minimum>
+											<minimum>${jacoco.minimum.coverage}</minimum>
 										</limit>
 									</limits>
 								</rule>
