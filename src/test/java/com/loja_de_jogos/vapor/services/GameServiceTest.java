@@ -53,7 +53,7 @@ class GameServiceTest {
         assertThat(result).isEqualTo(response);
         verify(gameMapper).gameCreationDtoToEntity(request);
         verify(gameRepository).save(gameToSave);
-        verify(gameMapper).gameEntityToResponseDTO(savedGame);
+        verify(gameMapper).gameEntityToResponseDTO(gameToSave);
     }
 
     @Test
