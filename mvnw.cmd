@@ -176,10 +176,10 @@ if (!$actualDistributionDir) {
 Write-Verbose "Found extracted Maven distribution directory: $actualDistributionDir"
 Rename-Item -Path "$TMP_DOWNLOAD_DIR/$actualDistributionDir" -NewName $MAVEN_HOME_NAME | Out-Null
 try {
-  Move-Item -Path "$TMP_DOWNLOAD_DIR/$MAVEN_HOME_NAME" -Destination $MAVEN_HOME_PARENT | Out-Null
+  Copy-Item -Path "$TMP_DOWNLOAD_DIR/$MAVEN_HOME_NAME" -Destination "$MAVEN_HOME" -Recurse -Force | Out-Null
 } catch {
   if (! (Test-Path -Path "$MAVEN_HOME" -PathType Container)) {
-    Write-Error "fail to move MAVEN_HOME"
+    Write-Error "fail to move MAVEN_HOME: $_"
   }
 } finally {
   try { Remove-Item $TMP_DOWNLOAD_DIR -Recurse -Force | Out-Null }
