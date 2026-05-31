@@ -3,9 +3,12 @@ package com.loja_de_jogos.vapor.services;
 import com.loja_de_jogos.vapor.dtos.gameDTO.GameCreationRequestDTO;
 import com.loja_de_jogos.vapor.dtos.gameDTO.GameResponseDTO;
 import com.loja_de_jogos.vapor.dtos.gameDTO.GameUpdateRequestDTO;
+import com.loja_de_jogos.vapor.enums.ErrorMessage;
+import com.loja_de_jogos.vapor.exceptions.BaseException;
 import com.loja_de_jogos.vapor.mappers.GameMapper;
 import com.loja_de_jogos.vapor.models.Game;
 import com.loja_de_jogos.vapor.repositories.GameRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,8 +30,9 @@ public class GameService {
         return gameMapper.gameEntityToResponseDTO(savedGame);
     }
 
-    public Optional<GameResponseDTO> getGameById(Long id){
-        return gameRepository.findById(id).map(gameMapper::gameEntityToResponseDTO);
+    public GameResponseDTO getGameById(Long id){
+        return gameRepository.findById(id).map(gameMapper::gameEntityToResponseDTO)
+                .orElseThrow(() -> new BaseException(ErrorMessage.GAME_NOT_FOUND));
     }
 
     public List<GameResponseDTO> getAllGames(){
@@ -42,12 +46,12 @@ public class GameService {
                 Game updatedGame = gameRepository.save(game);
                 return gameMapper.gameEntityToResponseDTO(updatedGame);
             })
-            .orElseThrow(() -> new RuntimeException("Game not found."));
+            .orElseThrow(() -> new BaseException(ErrorMessage.GAME_NOT_FOUND));
     }
 
     public void deleteGame(Long id){
         if(!gameRepository.existsById(id)){
-            throw new RuntimeException("Game not found.");
+            throw new BaseException(ErrorMessage.GAME_NOT_FOUND);
         }
         
         gameRepository.deleteById(id);

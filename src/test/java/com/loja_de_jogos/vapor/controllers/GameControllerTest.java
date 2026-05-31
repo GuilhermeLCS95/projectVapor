@@ -5,7 +5,10 @@ import com.loja_de_jogos.vapor.dtos.gameDTO.GameCreationRequestDTO;
 import com.loja_de_jogos.vapor.dtos.gameDTO.GameResponseDTO;
 import com.loja_de_jogos.vapor.dtos.gameDTO.GameUpdateRequestDTO;
 import com.loja_de_jogos.vapor.enums.AgeRating;
+import com.loja_de_jogos.vapor.enums.ErrorMessage;
 import com.loja_de_jogos.vapor.enums.Genre;
+import com.loja_de_jogos.vapor.exceptions.BaseException;
+import com.loja_de_jogos.vapor.handlers.GlobalExceptionHandler;
 import com.loja_de_jogos.vapor.services.GameService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +51,7 @@ class GameControllerTest {
     void setUp() {
         objectMapper = new ObjectMapper().findAndRegisterModules();
         mockMvc = standaloneSetup(new GameController(gameService))
+                .setControllerAdvice(new GlobalExceptionHandler())
             .build();
     }
 
@@ -60,6 +64,7 @@ class GameControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(creationRequest())))
             .andExpect(status().isOk())
+
             .andExpect(jsonPath("$.name").value("Hollow Knight"))
             .andExpect(jsonPath("$.price").value(29.99))
             .andExpect(jsonPath("$.genre[0]").value("RPG"))
@@ -72,7 +77,7 @@ class GameControllerTest {
 
     @Test
     void getByIdShouldReturnGameWhenFound() throws Exception {
-        when(gameService.getGameById(1L)).thenReturn(Optional.of(response()));
+        when(gameService.getGameById(1L)).thenReturn(response());
 
         mockMvc.perform(get("/games/{id}", 1L))
             .andExpect(status().isOk())
@@ -84,7 +89,7 @@ class GameControllerTest {
 
     @Test
     void getByIdShouldReturnNotFoundWhenGameDoesNotExist() throws Exception {
-        when(gameService.getGameById(99L)).thenReturn(Optional.empty());
+        when(gameService.getGameById(99L)).thenThrow(new BaseException(ErrorMessage.GAME_NOT_FOUND));
 
         mockMvc.perform(get("/games/{id}", 99L))
             .andExpect(status().isNotFound());

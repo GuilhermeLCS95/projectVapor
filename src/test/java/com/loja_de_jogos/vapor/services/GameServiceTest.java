@@ -5,6 +5,7 @@ import com.loja_de_jogos.vapor.dtos.gameDTO.GameResponseDTO;
 import com.loja_de_jogos.vapor.dtos.gameDTO.GameUpdateRequestDTO;
 import com.loja_de_jogos.vapor.enums.AgeRating;
 import com.loja_de_jogos.vapor.enums.Genre;
+import com.loja_de_jogos.vapor.exceptions.BaseException;
 import com.loja_de_jogos.vapor.mappers.GameMapper;
 import com.loja_de_jogos.vapor.models.Game;
 import com.loja_de_jogos.vapor.repositories.GameRepository;
@@ -64,9 +65,9 @@ class GameServiceTest {
         when(gameRepository.findById(1L)).thenReturn(Optional.of(game));
         when(gameMapper.gameEntityToResponseDTO(game)).thenReturn(response);
 
-        Optional<GameResponseDTO> result = gameService.getGameById(1L);
+        GameResponseDTO result = gameService.getGameById(1L);
 
-        assertThat(result).contains(response);
+        assertThat(result).isEqualTo(response);
         verify(gameRepository).findById(1L);
         verify(gameMapper).gameEntityToResponseDTO(game);
     }
@@ -75,9 +76,9 @@ class GameServiceTest {
     void getGameByIdShouldReturnEmptyWhenNotFound() {
         when(gameRepository.findById(99L)).thenReturn(Optional.empty());
 
-        Optional<GameResponseDTO> result = gameService.getGameById(99L);
+        assertThatThrownBy(() -> gameService.getGameById(99L))
+                .isInstanceOf(BaseException.class);
 
-        assertThat(result).isEmpty();
         verify(gameRepository).findById(99L);
         verifyNoInteractions(gameMapper);
     }
@@ -159,8 +160,8 @@ class GameServiceTest {
         when(gameRepository.existsById(99L)).thenReturn(false);
 
         assertThatThrownBy(() -> gameService.deleteGame(99L))
-            .isInstanceOf(RuntimeException.class)
-            .hasMessage("Game not found.");
+            .isInstanceOf(BaseException.class)
+                .hasMessage("Game not found.");
 
         verify(gameRepository).existsById(99L);
     }
