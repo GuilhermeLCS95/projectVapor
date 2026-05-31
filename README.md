@@ -17,6 +17,7 @@ Vapor is a Spring Boot REST API for managing a game store catalog. The project c
 - Mockito
 - JaCoCo
 - Maven Wrapper
+- Teste
 
 ## Project Structure
 
