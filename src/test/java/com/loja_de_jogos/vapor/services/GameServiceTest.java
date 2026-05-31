@@ -160,8 +160,8 @@ class GameServiceTest {
         when(gameRepository.existsById(99L)).thenReturn(false);
 
         assertThatThrownBy(() -> gameService.deleteGame(99L))
-            .isInstanceOf(RuntimeException.class)
-            .hasMessage("Game not found.");
+            .isInstanceOf(BaseException.class)
+                .hasMessage("Game not found.");
 
         verify(gameRepository).existsById(99L);
     }
