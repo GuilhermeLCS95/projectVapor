@@ -45,6 +45,7 @@ class GameServiceTest {
         Game savedGame = gameWithId(1L);
         GameResponseDTO response = response();
 
+        when(gameRepository.existsByName(request.name())).thenReturn(false);
         when(gameMapper.gameCreationDtoToEntity(request)).thenReturn(gameToSave);
         when(gameRepository.save(gameToSave)).thenReturn(savedGame);
         when(gameMapper.gameEntityToResponseDTO(savedGame)).thenReturn(response);
@@ -55,6 +56,18 @@ class GameServiceTest {
         verify(gameMapper).gameCreationDtoToEntity(request);
         verify(gameRepository).save(gameToSave);
         verify(gameMapper).gameEntityToResponseDTO(savedGame);
+    }
+
+    @Test
+    void addGameShouldThrowWhenGameAlreadyExists(){
+        GameCreationRequestDTO request = creationRequest();
+
+        when(gameRepository.existsByName(request.name())).thenReturn(true);
+
+        assertThatThrownBy(() -> gameService.addGame(request)).isInstanceOf(BaseException.class)
+                .hasMessage("Game already exists.");
+
+        verify(gameRepository).existsByName(request.name());
     }
 
     @Test

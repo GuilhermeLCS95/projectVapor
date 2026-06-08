@@ -8,6 +8,7 @@ import com.loja_de_jogos.vapor.exceptions.BaseException;
 import com.loja_de_jogos.vapor.mappers.GameMapper;
 import com.loja_de_jogos.vapor.models.Game;
 import com.loja_de_jogos.vapor.repositories.GameRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,12 @@ public class GameService {
         this.gameMapper = gameMapper;
     }
 
+    @Transactional
     public GameResponseDTO addGame(GameCreationRequestDTO gameCreationRequest){
+        if(gameRepository.existsByName(gameCreationRequest.name())){
+            throw new BaseException(ErrorMessage.GAME_ALREADY_EXISTS);
+        }
+
         Game game = gameMapper.gameCreationDtoToEntity(gameCreationRequest);
         Game savedGame = gameRepository.save(game);
         return gameMapper.gameEntityToResponseDTO(savedGame);
@@ -39,6 +45,7 @@ public class GameService {
         return gameRepository.findAll().stream().map(gameMapper::gameEntityToResponseDTO).toList();
     }
 
+    @Transactional
     public GameResponseDTO updateGame(Long id, GameUpdateRequestDTO gameUpdateRequest){
         return gameRepository.findById(id)
             .map(game ->{
@@ -49,6 +56,7 @@ public class GameService {
             .orElseThrow(() -> new BaseException(ErrorMessage.GAME_NOT_FOUND));
     }
 
+    @Transactional
     public void deleteGame(Long id){
         if(!gameRepository.existsById(id)){
             throw new BaseException(ErrorMessage.GAME_NOT_FOUND);
