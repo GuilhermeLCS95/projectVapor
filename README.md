@@ -1,6 +1,6 @@
 # Vapor
 
-Vapor is a Spring Boot REST API for managing a game store catalog. The project currently exposes CRUD operations for games, persists data with Spring Data JPA, uses an in-memory H2 database for local development, and includes API documentation through Springdoc OpenAPI.
+Vapor is a Spring Boot REST API for managing a game store catalog. The project currently exposes CRUD operations for games, persists data with Spring Data JPA, uses MySQL for persistence, and includes API documentation through Springdoc OpenAPI.
 
 ## Tech Stack
 
@@ -8,7 +8,7 @@ Vapor is a Spring Boot REST API for managing a game store catalog. The project c
 - Spring Boot 4.0.5
 - Spring Web MVC
 - Spring Data JPA
-- H2 Database
+- MySQL
 - Jakarta Validation
 - Lombok
 - MapStruct
@@ -51,17 +51,44 @@ The application is configured in `src/main/resources/application.properties`.
 Current local database configuration:
 
 ```properties
-spring.datasource.url=jdbc:h2:mem:vapor-db
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-spring.jpa.hibernate.ddl-auto=update
-spring.h2.console.enabled=true
-spring.h2.console.path=/h2-console
+spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/vapor_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+spring.datasource.driverClassName=com.mysql.cj.jdbc.Driver
+spring.datasource.username=${DB_USERNAME:vapor}
+spring.datasource.password=${DB_PASSWORD:vapor}
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+spring.jpa.hibernate.ddl-auto=validate
 ```
 
-By default, the app uses an in-memory H2 database. Data is reset whenever the application stops.
+By default, the app connects to a local MySQL database named `vapor_db` using the `vapor` user and `vapor` password. You can override the connection with the `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD` environment variables.
+
+You can start a local MySQL instance with Docker Compose:
+
+```powershell
+docker compose up -d
+```
+
+If the local database was created before the Flyway migrations were added, reset the Docker volume and start it again:
+
+```powershell
+docker compose down -v
+docker compose up -d
+```
+
+If you are using your own MySQL server instead, create the database before running the application:
+
+```sql
+CREATE DATABASE vapor_db;
+CREATE USER 'vapor'@'%' IDENTIFIED BY 'vapor';
+GRANT ALL PRIVILEGES ON vapor_db.* TO 'vapor'@'%';
+```
+
+Database schema changes are managed by Flyway migrations under:
+
+```text
+src/main/resources/db/migration/
+```
+
+The initial migrations create the `games` and `game_genres` tables and insert 20 sample games. The `normalized_id` column is nullable for now.
 
 ## Running the Application
 
@@ -95,22 +122,6 @@ The OpenAPI JSON is available at:
 
 ```text
 http://localhost:8080/v3/api-docs
-```
-
-## H2 Console
-
-When the application is running, the H2 console is available at:
-
-```text
-http://localhost:8080/h2-console
-```
-
-Use these values:
-
-```text
-JDBC URL: jdbc:h2:mem:vapor-db
-Username: sa
-Password: <empty>
 ```
 
 ## Game API

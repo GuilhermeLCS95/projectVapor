@@ -6,13 +6,11 @@ import com.loja_de_jogos.vapor.dtos.gameDTO.GameUpdateRequestDTO;
 import com.loja_de_jogos.vapor.enums.ErrorMessage;
 import com.loja_de_jogos.vapor.exceptions.BaseException;
 import com.loja_de_jogos.vapor.mappers.GameMapper;
-import com.loja_de_jogos.vapor.models.Game;
+import com.loja_de_jogos.vapor.entities.Game;
 import com.loja_de_jogos.vapor.repositories.GameRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class GameService {
