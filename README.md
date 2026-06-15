@@ -53,18 +53,33 @@ Current local database configuration:
 ```properties
 spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/vapor_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
 spring.datasource.driverClassName=com.mysql.cj.jdbc.Driver
-spring.datasource.username=${DB_USERNAME:root}
-spring.datasource.password=${DB_PASSWORD:}
+spring.datasource.username=${DB_USERNAME:vapor}
+spring.datasource.password=${DB_PASSWORD:vapor}
 spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
 spring.jpa.hibernate.ddl-auto=validate
 ```
 
-By default, the app connects to a local MySQL database named `vapor_db` using the `root` user and an empty password. You can override the connection with the `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD` environment variables.
+By default, the app connects to a local MySQL database named `vapor_db` using the `vapor` user and `vapor` password. You can override the connection with the `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD` environment variables.
 
-Create the database before running the application if your MySQL user cannot create databases automatically:
+You can start a local MySQL instance with Docker Compose:
+
+```powershell
+docker compose up -d
+```
+
+If the local database was created before the Flyway migrations were added, reset the Docker volume and start it again:
+
+```powershell
+docker compose down -v
+docker compose up -d
+```
+
+If you are using your own MySQL server instead, create the database before running the application:
 
 ```sql
 CREATE DATABASE vapor_db;
+CREATE USER 'vapor'@'%' IDENTIFIED BY 'vapor';
+GRANT ALL PRIVILEGES ON vapor_db.* TO 'vapor'@'%';
 ```
 
 Database schema changes are managed by Flyway migrations under:

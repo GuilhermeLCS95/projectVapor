@@ -1,0 +1,21 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: vapor-mysql
+    environment:
+      MYSQL_DATABASE: vapor_db
+      MYSQL_USER: vapor
+      MYSQL_PASSWORD: vapor
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - vapor_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "vapor", "-pvapor"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  vapor_mysql_data:
