@@ -7,7 +7,7 @@ import com.loja_de_jogos.vapor.enums.AgeRating;
 import com.loja_de_jogos.vapor.enums.Genre;
 import com.loja_de_jogos.vapor.exceptions.BaseException;
 import com.loja_de_jogos.vapor.mappers.GameMapper;
-import com.loja_de_jogos.vapor.models.Game;
+import com.loja_de_jogos.vapor.entities.Game;
 import com.loja_de_jogos.vapor.repositories.GameRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
