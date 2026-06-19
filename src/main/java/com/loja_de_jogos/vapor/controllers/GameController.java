@@ -5,43 +5,43 @@ import com.loja_de_jogos.vapor.dtos.gameDTO.GameResponseDTO;
 import com.loja_de_jogos.vapor.dtos.gameDTO.GameUpdateRequestDTO;
 import com.loja_de_jogos.vapor.services.GameService;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/games")
 @CrossOrigin(origins = "*")
 public class GameController {
-    private final GameService gameService;
+  private final GameService gameService;
 
-    public GameController(GameService service) {
-        this.gameService = service;
-    }
+  public GameController(GameService service) {
+    this.gameService = service;
+  }
 
-    @PostMapping
-    public GameResponseDTO create(@Valid @RequestBody GameCreationRequestDTO gameCreationRequest){
-       return gameService.addGame(gameCreationRequest);
-    }
+  @PostMapping
+  public GameResponseDTO create(@Valid @RequestBody GameCreationRequestDTO gameCreationRequest) {
+    return gameService.addGame(gameCreationRequest);
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<GameResponseDTO> getById(@PathVariable Long id){
-        return ResponseEntity.ok(gameService.getGameById(id));
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<GameResponseDTO> getById(@PathVariable Long id) {
+    return ResponseEntity.ok(gameService.getGameById(id));
+  }
 
-    @GetMapping
-    public List<GameResponseDTO> getAll(){
-        return gameService.getAllGames();
-    }
+  @GetMapping
+  public List<GameResponseDTO> getAll() {
+    return gameService.getAllGames();
+  }
 
-    @PutMapping("/{id}")
-    public GameResponseDTO update(@PathVariable Long id, @Valid @RequestBody GameUpdateRequestDTO gameUpdateRequest){
-        return gameService.updateGame(id,gameUpdateRequest);
-    }
+  @PutMapping("/{id}")
+  public GameResponseDTO update(
+      @PathVariable Long id, @Valid @RequestBody GameUpdateRequestDTO gameUpdateRequest) {
+    return gameService.updateGame(id, gameUpdateRequest);
+  }
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id){
-        gameService.deleteGame(id);
-    }
+  @DeleteMapping("/{id}")
+  public void delete(@PathVariable Long id) {
+    gameService.deleteGame(id);
+  }
 }

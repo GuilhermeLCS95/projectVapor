@@ -5,8 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GameRepository extends JpaRepository<Game, Long> {
 
-    boolean existsByName(String name);
+  boolean existsByName(String name);
 
-    boolean existsByNormalizedId(String normalizedId);
-
+  boolean existsByNormalizedId(String normalizedId);
 }

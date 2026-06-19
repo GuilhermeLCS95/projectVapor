@@ -33,6 +33,8 @@ qualquer evidência que atenda aos critérios de aceite]
 
 ## Checklist
 
+Para qualquer dúvida em relação a esses pontos, consultar comandos no readme
+
 - [ ] Código revisado pelo autor
 - [ ] Testes executados localmente
 - [ ] Code coverage testado localmente
@@ -40,4 +42,6 @@ qualquer evidência que atenda aos critérios de aceite]
 - [ ] Documentação/README atualizados quando necessário
 - [ ] Não há credenciais ou informações sensíveis expostas
 - [ ] Criei a branch com nomenclatura feat/pv-xxxx seguindo o número da tarefa
+- [ ] Spotless checks passaram com sucesso
+- [ ] Comando ./mvnw verify passou com sucesso
 
