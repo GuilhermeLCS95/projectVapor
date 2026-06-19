@@ -45,7 +45,7 @@ class GameServiceTest {
         Game savedGame = gameWithId(1L);
         GameResponseDTO response = response();
 
-        when(gameRepository.existsByName(request.name())).thenReturn(false);
+        when(gameRepository.existsByNormalizedId("hollow-knight-team-cherry")).thenReturn(false);
         when(gameMapper.gameCreationDtoToEntity(request)).thenReturn(gameToSave);
         when(gameRepository.save(gameToSave)).thenReturn(savedGame);
         when(gameMapper.gameEntityToResponseDTO(savedGame)).thenReturn(response);
@@ -53,6 +53,9 @@ class GameServiceTest {
         GameResponseDTO result = gameService.addGame(request);
 
         assertThat(result).isEqualTo(response);
+        assertThat(gameToSave.getNormalizedId()).isEqualTo("hollow-knight-team-cherry");
+
+        verify(gameRepository).existsByNormalizedId("hollow-knight-team-cherry");
         verify(gameMapper).gameCreationDtoToEntity(request);
         verify(gameRepository).save(gameToSave);
         verify(gameMapper).gameEntityToResponseDTO(savedGame);
@@ -62,12 +65,11 @@ class GameServiceTest {
     void addGameShouldThrowWhenGameAlreadyExists(){
         GameCreationRequestDTO request = creationRequest();
 
-        when(gameRepository.existsByName(request.name())).thenReturn(true);
+        when(gameRepository.existsByNormalizedId("hollow-knight-team-cherry")).thenReturn(true);
 
-        assertThatThrownBy(() -> gameService.addGame(request)).isInstanceOf(BaseException.class)
-                .hasMessage("Game already exists.");
+        assertThatThrownBy(() -> gameService.addGame(request)).isInstanceOf(BaseException.class);
 
-        verify(gameRepository).existsByName(request.name());
+        verify(gameRepository).existsByNormalizedId("hollow-knight-team-cherry");
     }
 
     @Test

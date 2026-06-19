@@ -5,15 +5,14 @@ import com.loja_de_jogos.vapor.dtos.gameDTO.GameResponseDTO;
 import com.loja_de_jogos.vapor.dtos.gameDTO.GameUpdateRequestDTO;
 import com.loja_de_jogos.vapor.enums.ErrorMessage;
 import com.loja_de_jogos.vapor.exceptions.BaseException;
+import com.loja_de_jogos.vapor.helper.GameNormalizer;
 import com.loja_de_jogos.vapor.mappers.GameMapper;
-import com.loja_de_jogos.vapor.models.Game;
+import com.loja_de_jogos.vapor.entities.Game;
 import com.loja_de_jogos.vapor.repositories.GameRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class GameService {
@@ -27,12 +26,22 @@ public class GameService {
 
     @Transactional
     public GameResponseDTO addGame(GameCreationRequestDTO gameCreationRequest){
-        if(gameRepository.existsByName(gameCreationRequest.name())){
+
+        String normalizedId = GameNormalizer.generateNormalizedId(
+                gameCreationRequest.name(),
+                gameCreationRequest.publisher()
+        );
+
+        if (gameRepository.existsByNormalizedId(normalizedId)) {
             throw new BaseException(ErrorMessage.GAME_ALREADY_EXISTS);
         }
 
         Game game = gameMapper.gameCreationDtoToEntity(gameCreationRequest);
+
+        game.setNormalizedId(normalizedId);
+
         Game savedGame = gameRepository.save(game);
+
         return gameMapper.gameEntityToResponseDTO(savedGame);
     }
 
@@ -45,7 +54,6 @@ public class GameService {
         return gameRepository.findAll().stream().map(gameMapper::gameEntityToResponseDTO).toList();
     }
 
-    @Transactional
     public GameResponseDTO updateGame(Long id, GameUpdateRequestDTO gameUpdateRequest){
         return gameRepository.findById(id)
             .map(game ->{
@@ -56,7 +64,6 @@ public class GameService {
             .orElseThrow(() -> new BaseException(ErrorMessage.GAME_NOT_FOUND));
     }
 
-    @Transactional
     public void deleteGame(Long id){
         if(!gameRepository.existsById(id)){
             throw new BaseException(ErrorMessage.GAME_NOT_FOUND);

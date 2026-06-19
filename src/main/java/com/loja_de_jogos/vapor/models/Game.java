@@ -49,6 +49,13 @@ public class Game {
         this.hasDiscount = hasDiscount;
         this.ageRating = ageRating;
     }
+
+    public void setNormalizedId(String normalizedId) {
+    }
+
+    public Object getNormalizedId() {
+        return null;
+    }
 }
 
 
