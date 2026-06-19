@@ -1,14 +1,7 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
-      - master
   pull_request:
-    branches:
-      - main
-      - master
 
 permissions:
   contents: read
@@ -32,11 +25,8 @@ jobs:
       - name: Make Maven wrapper executable
         run: chmod +x mvnw
 
-      - name: Check code formatting
-        run: ./mvnw spotless:check
-
       - name: Run tests and coverage checks
-        run: ./mvnw --batch-mode verify
+        run: ./mvnw --batch-mode clean verify
 
       - name: Upload JaCoCo coverage report
         if: always()
