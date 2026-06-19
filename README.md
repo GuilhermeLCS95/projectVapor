@@ -10,6 +10,7 @@ Vapor is a Spring Boot REST API for managing a game store catalog. The project c
 - Spring Data JPA
 - MySQL
 - Jakarta Validation
+- Spotless Checks
 - Lombok
 - MapStruct
 - Springdoc OpenAPI / Swagger UI
@@ -232,6 +233,19 @@ On Linux/macOS:
 
 ```bash
 ./mvnw test
+```
+
+## Verifying spotless checks
+
+```bash
+./mvnw spotless:apply -- Apply rules
+./mvnw spotless:check -- Check rules
+```
+
+## Verifying spotless, build, tests, jacoco all at once
+
+```bash
+./mvnw verify
 ```
 
 The project is configured with:

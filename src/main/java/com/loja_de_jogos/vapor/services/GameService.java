@@ -3,56 +3,76 @@ package com.loja_de_jogos.vapor.services;
 import com.loja_de_jogos.vapor.dtos.gameDTO.GameCreationRequestDTO;
 import com.loja_de_jogos.vapor.dtos.gameDTO.GameResponseDTO;
 import com.loja_de_jogos.vapor.dtos.gameDTO.GameUpdateRequestDTO;
+import com.loja_de_jogos.vapor.entities.Game;
 import com.loja_de_jogos.vapor.enums.ErrorMessage;
 import com.loja_de_jogos.vapor.exceptions.BaseException;
+import com.loja_de_jogos.vapor.helper.GameNormalizer;
 import com.loja_de_jogos.vapor.mappers.GameMapper;
-import com.loja_de_jogos.vapor.entities.Game;
 import com.loja_de_jogos.vapor.repositories.GameRepository;
-import org.springframework.stereotype.Service;
-
+import jakarta.transaction.Transactional;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class GameService {
-    private final GameRepository gameRepository;
-    private final GameMapper gameMapper;
+  private final GameRepository gameRepository;
+  private final GameMapper gameMapper;
 
-    public GameService(GameRepository gameRepository, GameMapper gameMapper) {
-        this.gameRepository = gameRepository;
-        this.gameMapper = gameMapper;
-    }
+  public GameService(GameRepository gameRepository, GameMapper gameMapper) {
+    this.gameRepository = gameRepository;
+    this.gameMapper = gameMapper;
+  }
 
-    public GameResponseDTO addGame(GameCreationRequestDTO gameCreationRequest){
-        Game game = gameMapper.gameCreationDtoToEntity(gameCreationRequest);
-        Game savedGame = gameRepository.save(game);
-        return gameMapper.gameEntityToResponseDTO(savedGame);
-    }
+  @Transactional
+  public GameResponseDTO addGame(GameCreationRequestDTO gameCreationRequest) {
 
-    public GameResponseDTO getGameById(Long id){
-        return gameRepository.findById(id).map(gameMapper::gameEntityToResponseDTO)
-                .orElseThrow(() -> new BaseException(ErrorMessage.GAME_NOT_FOUND));
-    }
+    String normalizedId =
+        buildNormalizedId(gameCreationRequest.name(), gameCreationRequest.publisher());
+    Game game = gameMapper.gameCreationDtoToEntity(gameCreationRequest);
+    game.setNormalizedId(normalizedId);
+    Game savedGame = gameRepository.save(game);
+    return gameMapper.gameEntityToResponseDTO(savedGame);
+  }
 
-    public List<GameResponseDTO> getAllGames(){
-        return gameRepository.findAll().stream().map(gameMapper::gameEntityToResponseDTO).toList();
-    }
+  public GameResponseDTO getGameById(Long id) {
+    return gameRepository
+        .findById(id)
+        .map(gameMapper::gameEntityToResponseDTO)
+        .orElseThrow(() -> new BaseException(ErrorMessage.GAME_NOT_FOUND));
+  }
 
-    public GameResponseDTO updateGame(Long id, GameUpdateRequestDTO gameUpdateRequest){
-        return gameRepository.findById(id)
-            .map(game ->{
-                gameMapper.gameUpdateDtoToEntity(gameUpdateRequest, game);
-                Game updatedGame = gameRepository.save(game);
-                return gameMapper.gameEntityToResponseDTO(updatedGame);
+  public List<GameResponseDTO> getAllGames() {
+    return gameRepository.findAll().stream().map(gameMapper::gameEntityToResponseDTO).toList();
+  }
+
+  public GameResponseDTO updateGame(Long id, GameUpdateRequestDTO gameUpdateRequest) {
+    return gameRepository
+        .findById(id)
+        .map(
+            game -> {
+              String normalizedId =
+                  buildNormalizedId(gameUpdateRequest.name(), gameUpdateRequest.publisher());
+              gameMapper.gameUpdateDtoToEntity(gameUpdateRequest, game);
+              game.setNormalizedId(normalizedId);
+              Game updatedGame = gameRepository.save(game);
+              return gameMapper.gameEntityToResponseDTO(updatedGame);
             })
-            .orElseThrow(() -> new BaseException(ErrorMessage.GAME_NOT_FOUND));
+        .orElseThrow(() -> new BaseException(ErrorMessage.GAME_NOT_FOUND));
+  }
+
+  public void deleteGame(Long id) {
+    if (!gameRepository.existsById(id)) {
+      throw new BaseException(ErrorMessage.GAME_NOT_FOUND);
     }
 
-    public void deleteGame(Long id){
-        if(!gameRepository.existsById(id)){
-            throw new BaseException(ErrorMessage.GAME_NOT_FOUND);
-        }
-        
-        gameRepository.deleteById(id);
-    }
+    gameRepository.deleteById(id);
+  }
 
+  private String buildNormalizedId(String gameName, String gamePublisher) {
+    String normalizedId = GameNormalizer.generateNormalizedId(gameName, gamePublisher);
+    if (gameRepository.existsByNormalizedId(normalizedId)) {
+      throw new BaseException(ErrorMessage.GAME_ALREADY_EXISTS);
+    }
+    return normalizedId;
+  }
 }
