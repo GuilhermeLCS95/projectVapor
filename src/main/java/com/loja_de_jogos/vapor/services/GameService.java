@@ -27,11 +27,7 @@ public class GameService {
   public GameResponseDTO addGame(GameCreationRequestDTO gameCreationRequest) {
 
     String normalizedId =
-        GameNormalizer.generateNormalizedId(
-            gameCreationRequest.name(), gameCreationRequest.publisher());
-    if (gameRepository.existsByNormalizedId(normalizedId)) {
-      throw new BaseException(ErrorMessage.GAME_ALREADY_EXISTS);
-    }
+        buildNormalizedId(gameCreationRequest.name(), gameCreationRequest.publisher());
     Game game = gameMapper.gameCreationDtoToEntity(gameCreationRequest);
     game.setNormalizedId(normalizedId);
     Game savedGame = gameRepository.save(game);
@@ -54,7 +50,10 @@ public class GameService {
         .findById(id)
         .map(
             game -> {
+              String normalizedId =
+                  buildNormalizedId(gameUpdateRequest.name(), gameUpdateRequest.publisher());
               gameMapper.gameUpdateDtoToEntity(gameUpdateRequest, game);
+              game.setNormalizedId(normalizedId);
               Game updatedGame = gameRepository.save(game);
               return gameMapper.gameEntityToResponseDTO(updatedGame);
             })
@@ -67,5 +66,13 @@ public class GameService {
     }
 
     gameRepository.deleteById(id);
+  }
+
+  private String buildNormalizedId(String gameName, String gamePublisher) {
+    String normalizedId = GameNormalizer.generateNormalizedId(gameName, gamePublisher);
+    if (gameRepository.existsByNormalizedId(normalizedId)) {
+      throw new BaseException(ErrorMessage.GAME_ALREADY_EXISTS);
+    }
+    return normalizedId;
   }
 }
